@@ -1,97 +1,42 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 namespace ArgumentParsing
 {
-    public abstract class Argument
+    public interface IArgument
     {
-        public abstract bool IsRequired { get; set; }
-        public abstract IList<string> PossibleArgumentNames { get; set; }
-        public abstract StringComparison ArgumentNameStringComparison { get; set; }
-        public abstract bool ValueRequired { get; set; }
-
-        public abstract string ParsedArgumentName { get; protected set; }
-
-        public abstract SetArgumentResult TrySetArgument(string argumentName);
-        public abstract SetArgumentResult TrySetArgument(string argumentName, string argumentValue);
+        StringComparison ArgumentNameStringComparison { get; set; }
+        bool IsRequired { get; set; }
+        string ParsedArgumentName { get; }
+        IList<string> PossibleArgumentNames { get; set; }
+        SetArgumentResult TrySetArgument(string argumentName);
     }
 
-    public class Argument<T> : Argument
+    public class Argument : IArgument
     {
-        private readonly IStringParser _stringParser;
-        public override bool IsRequired { get; set; }
-        public override IList<string> PossibleArgumentNames { get; set; }
-        public override StringComparison ArgumentNameStringComparison { get; set; } = StringComparison.CurrentCultureIgnoreCase;
-        public override bool ValueRequired { get; set; }
+        public bool IsRequired { get; set; }
+        public IList<string> PossibleArgumentNames { get; set; }
+        public StringComparison ArgumentNameStringComparison { get; set; } = StringComparison.CurrentCultureIgnoreCase;
 
-        public override string ParsedArgumentName { get; protected set; }
-        public T ParsedArgumentValue { get; private set; }
+        public string ParsedArgumentName { get; protected set; }
 
-        public Argument(IList<string> possibleArgumentNames) : this(possibleArgumentNames, new StringParser())
-        {}
-
-        public Argument(IList<string> possibleArgumentNames, IStringParser stringParser)
+        public Argument(IList<string> possibleArgumentNames)
         {
-            var valueType = typeof(T);
-            if (!SupportedTypes.Contains(valueType))
-            {
-                throw new TypeLoadException(nameof(Argument<object>) + " created with unsupported type T:" + valueType);
-            }
-
             PossibleArgumentNames = possibleArgumentNames;
-
-            _stringParser = stringParser;
         }
 
-        public override SetArgumentResult TrySetArgument(string argumentName)
-        {
-            return TrySetArgument(argumentName, null);
-        }
-
-        public override SetArgumentResult TrySetArgument(string argumentName, string argumentValue)
+        public virtual SetArgumentResult TrySetArgument(string argumentName)
         {
             if (PossibleArgumentNames == null) { return SetArgumentResult.InvalidArgumentName; }
 
             var argumentNameValid = PossibleArgumentNames.Any(possibleArgumentName => possibleArgumentName.Equals(argumentName, ArgumentNameStringComparison));
 
-            if (!argumentNameValid)
-            {
-                return SetArgumentResult.InvalidArgumentName;
-            }
-
-            if (!ValueRequired)
-            {
-                ParsedArgumentName = argumentName;
-                return SetArgumentResult.Success;
-            }
-
-            T parsedArgumentValue;
-            var argumentValueValid = _stringParser.TryParse(argumentValue, out parsedArgumentValue);
-
-            if (!argumentValueValid) { return SetArgumentResult.InvalidArgumentValue; }
+            if (!argumentNameValid) { return SetArgumentResult.InvalidArgumentName; }
 
             ParsedArgumentName = argumentName;
-            ParsedArgumentValue = parsedArgumentValue;
-
             return SetArgumentResult.Success;
         }
-
-        public static readonly IList<Type> SupportedTypes = new List<Type>
-        {
-            typeof(char),
-            typeof(string),
-            typeof(short),
-            typeof(ushort),
-            typeof(int),
-            typeof(uint),
-            typeof(long),
-            typeof(ulong),
-            typeof(double),
-            typeof(decimal),
-            typeof(bool),
-        };
     }
 
     public enum SetArgumentResult

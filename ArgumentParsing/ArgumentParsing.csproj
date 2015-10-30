@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Argument.cs" />
+    <Compile Include="ArgumentWithValue.cs" />
     <Compile Include="ArgumentParser.cs" />
     <Compile Include="ArgumentParsingResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -10,23 +10,15 @@ namespace ArgumentParsing
     {
         IList<string> ArgumentDelimeters { get; set; }
         IList<string> ValueDelimeters { get; set; }
-        IList<Argument> AllowedArguments { get; }
-
-        IArgumentParsingResult Parse(string[] args);
+        IArgumentParsingResult Parse(string[] args, IList<IArgument> allowedArguments);
     }
 
     public class ArgumentParser : IArgumentParser
     {
         public IList<string> ArgumentDelimeters { get; set; } = new List<string> {"-", "--", "/"};
         public IList<string> ValueDelimeters { get; set; } = new List<string> {"=", ":"};
-        public IList<Argument> AllowedArguments { get; }
 
-        public ArgumentParser(IList<Argument> allowedArguments)
-        {
-            AllowedArguments = allowedArguments;
-        }
-
-        public IArgumentParsingResult Parse(string[] args)
+        public IArgumentParsingResult Parse(string[] args, IList<IArgument> allowedArguments)
         {
             throw new NotImplementedException();
         }
