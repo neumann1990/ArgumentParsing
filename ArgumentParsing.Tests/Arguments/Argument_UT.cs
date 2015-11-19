@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using ArgumentParsing.Arguments;
 using NUnit.Framework;
-using Rhino.Mocks;
 
-namespace ArgumentParsing.Tests
+namespace ArgumentParsing.Tests.Arguments
 {
     [TestFixture]
     public class Argument_UT
@@ -12,8 +12,8 @@ namespace ArgumentParsing.Tests
         public void TrySetArgument_Returns_InvalidArgumentName_When_Argument_Name_Is_Incorrect()
         {
             var testObject = new Argument(null);
-            var actual = testObject.TrySetArgument("some arg");
-            Assert.That(actual, Is.EqualTo(SetArgumentResult.InvalidArgumentName));
+            var actual = testObject.TrySetArgumentName("some arg");
+            Assert.That(actual, Is.EqualTo(SetArgumentDataResult.InvalidArgumentName));
             Assert.That(testObject.ParsedArgumentName, Is.Null);
         }
 
@@ -23,8 +23,8 @@ namespace ArgumentParsing.Tests
             const string argumentName = "someArg";
             var testObject = new Argument(new List<string> {argumentName});
 
-            var actual = testObject.TrySetArgument(argumentName);
-            Assert.That(actual, Is.EqualTo(SetArgumentResult.Success));
+            var actual = testObject.TrySetArgumentName(argumentName);
+            Assert.That(actual, Is.EqualTo(SetArgumentDataResult.Success));
             Assert.That(testObject.ParsedArgumentName, Is.EqualTo(argumentName));
         }
 
@@ -35,12 +35,14 @@ namespace ArgumentParsing.Tests
             const string possibleArgumentName2 = "someArg2";
             var testObject = new Argument(new List<string> { possibleArgumentName1, possibleArgumentName2 });
 
-            var actual = testObject.TrySetArgument(possibleArgumentName1);
-            Assert.That(actual, Is.EqualTo(SetArgumentResult.Success));
+            var actual = testObject.TrySetArgumentName(possibleArgumentName1);
+            Assert.That(actual, Is.EqualTo(SetArgumentDataResult.Success));
+            Assert.That(testObject.ParsedSuccessfully, Is.True);
             Assert.That(testObject.ParsedArgumentName, Is.EqualTo(possibleArgumentName1));
 
-            actual = testObject.TrySetArgument(possibleArgumentName2);
-            Assert.That(actual, Is.EqualTo(SetArgumentResult.Success));
+            actual = testObject.TrySetArgumentName(possibleArgumentName2);
+            Assert.That(actual, Is.EqualTo(SetArgumentDataResult.Success));
+            Assert.That(testObject.ParsedSuccessfully, Is.True);
             Assert.That(testObject.ParsedArgumentName, Is.EqualTo(possibleArgumentName2));
         }
 
@@ -51,12 +53,12 @@ namespace ArgumentParsing.Tests
             const string possibleArgumentName2 = "someArg2";
             var testObject = new Argument(new List<string> { possibleArgumentName1, possibleArgumentName2 });
 
-            var actual = testObject.TrySetArgument("someInvalidArg");
-            Assert.That(actual, Is.EqualTo(SetArgumentResult.InvalidArgumentName));
+            var actual = testObject.TrySetArgumentName("someInvalidArg");
+            Assert.That(actual, Is.EqualTo(SetArgumentDataResult.InvalidArgumentName));
             Assert.That(testObject.ParsedArgumentName, Is.Null);
 
-            actual = testObject.TrySetArgument("someArg3");
-            Assert.That(actual, Is.EqualTo(SetArgumentResult.InvalidArgumentName));
+            actual = testObject.TrySetArgumentName("someArg3");
+            Assert.That(actual, Is.EqualTo(SetArgumentDataResult.InvalidArgumentName));
             Assert.That(testObject.ParsedArgumentName, Is.Null);
         }
 
@@ -70,16 +72,16 @@ namespace ArgumentParsing.Tests
             };
 
 
-            var actual = testObject.TrySetArgument(argumentName.ToLower());
-            Assert.That(actual, Is.EqualTo(SetArgumentResult.Success));
+            var actual = testObject.TrySetArgumentName(argumentName.ToLower());
+            Assert.That(actual, Is.EqualTo(SetArgumentDataResult.Success));
 
             testObject = new Argument(new List<string> { argumentName })
             {
                 ArgumentNameStringComparison = StringComparison.CurrentCulture
             };
 
-            actual = testObject.TrySetArgument(argumentName.ToLower());
-            Assert.That(actual, Is.EqualTo(SetArgumentResult.InvalidArgumentName));
+            actual = testObject.TrySetArgumentName(argumentName.ToLower());
+            Assert.That(actual, Is.EqualTo(SetArgumentDataResult.InvalidArgumentName));
             Assert.That(testObject.ParsedArgumentName, Is.Null);
         }
     }

@@ -17,8 +17,8 @@ namespace ArgumentParsing
 
             try
             {
-                var converter = TypeDescriptor.GetConverter(typeof(T));
-                parsedArgumentValue = (T)converter.ConvertFromString(argumentValue);
+                var converter = TypeDescriptor.GetConverter(typeof (T));
+                parsedArgumentValue = (T) converter.ConvertFromString(argumentValue);
                 return true;
             }
             catch (Exception)

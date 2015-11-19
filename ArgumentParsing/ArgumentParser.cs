@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ArgumentParsing.Arguments;
 
 namespace ArgumentParsing
 {
@@ -10,17 +9,47 @@ namespace ArgumentParsing
     {
         IList<string> ArgumentDelimeters { get; set; }
         IList<string> ValueDelimeters { get; set; }
-        IArgumentParsingResult Parse(string[] args, IList<IArgument> allowedArguments);
+        IArgumentParsingResult Parse(string[] rawArgs, IList<IArgument> allowedArguments);
     }
 
     public class ArgumentParser : IArgumentParser
     {
+        private readonly IArgumentValueMapper _argumentValueMapper;
+
         public IList<string> ArgumentDelimeters { get; set; } = new List<string> {"-", "--", "/"};
         public IList<string> ValueDelimeters { get; set; } = new List<string> {"=", ":"};
 
-        public IArgumentParsingResult Parse(string[] args, IList<IArgument> allowedArguments)
+        public ArgumentParser() : this(new ArgumentValueMapper())
+        {}
+
+        public ArgumentParser(IArgumentValueMapper argumentValueMapper)
         {
-            throw new NotImplementedException();
+            _argumentValueMapper = argumentValueMapper;
+        }
+
+        public IArgumentParsingResult Parse(string[] rawArgs, IList<IArgument> allowedArguments)
+        {
+            var argumentToValueMap = _argumentValueMapper.GetArgumentToValueMap(rawArgs, ArgumentDelimeters, ValueDelimeters);
+
+            foreach (var argumentValuePair in argumentToValueMap)
+            {
+                var argumentNameString = argumentValuePair.Key;
+                var argumentValueString = argumentValuePair.Value;
+                foreach (var unparsedArgument in allowedArguments)
+                {
+                    if (unparsedArgument.ParsedSuccessfully) { continue; }
+
+                    var argumentWithValue = unparsedArgument as IArgumentWithValue;
+                    var result = argumentWithValue?.TrySetArgumentNameAndValue(argumentNameString, argumentValueString) 
+                                    ?? unparsedArgument.TrySetArgumentName(argumentNameString);
+
+                    if (result == SetArgumentDataResult.Success) { break; }
+                }
+            }
+
+            var wasParsingSuccessful = allowedArguments.Where(a => a.IsRequired).All(a => a.ParsedSuccessfully);
+
+            return new ArgumentParsingResult(wasParsingSuccessful, allowedArguments);
         }
     }
 }

@@ -1,25 +1,23 @@
 ﻿using System.Collections.Generic;
+using ArgumentParsing.Arguments;
 
 namespace ArgumentParsing
 {
     public interface IArgumentParsingResult
     {
         bool ParsingSuccessful { get; }
-        IList<IArgument> SuccessfullyParsedArguments { get; }
-        IList<IArgument> InvalidArguments { get; }
+        IList<IArgument> Arguments { get; }
     }
 
     public class ArgumentParsingResult : IArgumentParsingResult
     {
         public bool ParsingSuccessful { get; }
-        public IList<IArgument> SuccessfullyParsedArguments { get; }
-        public IList<IArgument> InvalidArguments { get; }
+        public IList<IArgument> Arguments { get; }
 
-        public ArgumentParsingResult(bool parsingSuccessful, IList<IArgument> successfullyParsedArguments, IList<IArgument> invalidArguments)
+        public ArgumentParsingResult(bool parsingSuccessful, IList<IArgument> arguments)
         {
             ParsingSuccessful = parsingSuccessful;
-            SuccessfullyParsedArguments = successfullyParsedArguments;
-            InvalidArguments = invalidArguments;
+            Arguments = arguments;
         }
     }
 }

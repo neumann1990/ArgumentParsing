@@ -47,8 +47,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgumentParser_UT.cs" />
-    <Compile Include="ArgumentWithValue_UT.cs" />
-    <Compile Include="Argument_UT.cs" />
+    <Compile Include="ArgumentValueMapper_UT.cs" />
+    <Compile Include="Arguments\Argument_UT.cs" />
+    <Compile Include="Arguments\BoolArgument_UT.cs" />
+    <Compile Include="Arguments\CharArgument_UT.cs" />
+    <Compile Include="Arguments\DateTimeArgument_UT.cs" />
+    <Compile Include="Arguments\IntArgument_UT.cs" />
+    <Compile Include="Arguments\StringArgument_UT.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringParser_UT.cs" />
   </ItemGroup>
