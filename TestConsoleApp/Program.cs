@@ -10,12 +10,12 @@ namespace TestConsoleApp
     {
         public static void Main(string[] args)
         {
-            var developerModeArgument = new Argument(new List<string> { "developerMode" });
+            var developerModeArgument = new Argument("developerMode");
             var fileTypeArgument = new CharArgument(new List<string> { "fileType", "type" });
             var fileNameArgument = new StringArgument(new List<string> { "fileName", "file" });
-            var refDateArgument = new DateTimeArgument(new List<string> { "refdate" });
+            var refDateArgument = new DateTimeArgument("refdate");
             var countArgument = new IntArgument(new List<string> { "argumentCount", "count" });
-            var allowDuplicateArgument = new BoolArgument(new List<string> { "allowduplicatefile" })
+            var allowDuplicateArgument = new BoolArgument("allowduplicatefile")
             {
                 ArgumentNameStringComparison = StringComparison.CurrentCulture, //Case-sensitive 
                 IsRequired = false

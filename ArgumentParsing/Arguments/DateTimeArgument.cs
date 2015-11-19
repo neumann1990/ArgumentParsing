@@ -27,6 +27,8 @@ namespace ArgumentParsing.Arguments
         public DateTime ParsedArgumentValue { get; private set; }
         public bool ParsedSuccessfully { get; set; }
 
+        public DateTimeArgument(string possibleArgumentName) : this(new List<string> { possibleArgumentName }) { }
+
         public DateTimeArgument(IList<string> possibleArgumentNames) : this(new Argument(possibleArgumentNames),  new StringParser()) { }
 
         public DateTimeArgument(IArgument argumentWithoutValue, IStringParser stringParser)

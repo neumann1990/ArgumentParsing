@@ -6,14 +6,15 @@ namespace ArgumentParsing
 {
     public interface IArgumentValueMapper
     {
-        IDictionary<string, string> GetArgumentToValueMap(string[] argumentValueStrings, IList<string> argumentDelimeters, IList<string> valueDelimeters);
+        IArgumentValueMapperResult GetArgumentToValueMap(string[] argumentValueStrings, IList<string> argumentDelimeters, IList<string> valueDelimeters);
     }
 
     public class ArgumentValueMapper : IArgumentValueMapper
     {
-        public IDictionary<string, string> GetArgumentToValueMap(string[] argumentValueStrings, IList<string> argumentDelimeters, IList<string> valueDelimeters)
+        public IArgumentValueMapperResult GetArgumentToValueMap(string[] argumentValueStrings, IList<string> argumentDelimeters, IList<string> valueDelimeters)
         {
-            var argumentToValueMap = new Dictionary<string, string>();
+            var result = new ArgumentValueMapperResult();
+            var argumentToValueMap = result.ArgumentToValueMap;
             var orderedArgumentDelimeters = argumentDelimeters.OrderByDescending(a => a.Length);
             var orderedValueDelimeters = valueDelimeters.OrderByDescending(v => v.Length);
 
@@ -40,7 +41,8 @@ namespace ArgumentParsing
                 //If no argument delimeter found and it could not be treated as a space delimeted argument value
                 if (argumentDelimeterLength == 0)
                 {
-                    throw new ArgumentException($"Could not parse argument \"{argumentValueString}\"");
+                    result.UnknownArgumentStrings.Add(argumentValueString);
+                    continue;
                 }
 
                 //Find earliest instance of a argument value delimeter
@@ -74,7 +76,7 @@ namespace ArgumentParsing
                 previousArgumentName = argumentString;
             }
 
-            return argumentToValueMap;
+            return result;
         } 
     }
 }

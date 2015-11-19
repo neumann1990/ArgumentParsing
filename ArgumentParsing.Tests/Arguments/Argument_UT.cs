@@ -11,7 +11,7 @@ namespace ArgumentParsing.Tests.Arguments
         [Test]
         public void TrySetArgument_Returns_InvalidArgumentName_When_Argument_Name_Is_Incorrect()
         {
-            var testObject = new Argument(null);
+            var testObject = new Argument((List<string>)null);
             var actual = testObject.TrySetArgumentName("some arg");
             Assert.That(actual, Is.EqualTo(SetArgumentDataResult.InvalidArgumentName));
             Assert.That(testObject.ParsedArgumentName, Is.Null);

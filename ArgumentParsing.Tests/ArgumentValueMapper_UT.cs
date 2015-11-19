@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace ArgumentParsing.Tests
@@ -23,14 +24,16 @@ namespace ArgumentParsing.Tests
             const string argumentName = "someArgumentName";
 
             var stringArguments = new[] { $"-{argumentName}" };
-            var actualArgumentToValueMap = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var result = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var actualArgumentToValueMap = result.ArgumentToValueMap;
 
             Assert.That(actualArgumentToValueMap.ContainsKey(argumentName), Is.True);
             Assert.That(actualArgumentToValueMap[argumentName], Is.Null);
             Assert.That(actualArgumentToValueMap.Count, Is.EqualTo(1));
 
             stringArguments = new[] { $"/{argumentName}" };
-            actualArgumentToValueMap = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            result = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            actualArgumentToValueMap = result.ArgumentToValueMap;
 
             Assert.That(actualArgumentToValueMap.ContainsKey(argumentName), Is.True);
             Assert.That(actualArgumentToValueMap[argumentName], Is.Null);
@@ -43,7 +46,8 @@ namespace ArgumentParsing.Tests
             const string argumentName = "someArgumentName";
 
             var stringArguments = new[] { $"--{argumentName}" };
-            var actualArgumentToValueMap = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var result = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var actualArgumentToValueMap = result.ArgumentToValueMap;
 
             Assert.That(actualArgumentToValueMap.ContainsKey(argumentName), Is.True);
             Assert.That(actualArgumentToValueMap[argumentName], Is.Null);
@@ -59,7 +63,9 @@ namespace ArgumentParsing.Tests
             const string argumentName3 = "someArgumentName3";
 
             var stringArguments = new[] {$"-{argumentName1}", $"/{argumentName2}", $"--{argumentName3}" };
-            var actualArgumentToValueMap = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var result = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var actualArgumentToValueMap = result.ArgumentToValueMap;
+
             Assert.That(actualArgumentToValueMap.ContainsKey(argumentName1), Is.True);
             Assert.That(actualArgumentToValueMap[argumentName1], Is.Null);
 
@@ -79,7 +85,8 @@ namespace ArgumentParsing.Tests
             const string argumentValue = "someArgumentValue";
 
             var stringArguments = new[] { $"--{argumentName}={argumentValue}" };
-            var actualArgumentToValueMap = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var result = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var actualArgumentToValueMap = result.ArgumentToValueMap;
 
             Assert.That(actualArgumentToValueMap.ContainsKey(argumentName), Is.True);
             Assert.That(actualArgumentToValueMap[argumentName], Is.EqualTo(argumentValue));
@@ -94,7 +101,8 @@ namespace ArgumentParsing.Tests
             const string argumentValue = "c:/temp";
 
             var stringArguments = new[] { $"--{argumentName}={argumentValue}" };
-            var actualArgumentToValueMap = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var result = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var actualArgumentToValueMap = result.ArgumentToValueMap;
 
             Assert.That(actualArgumentToValueMap.ContainsKey(argumentName), Is.True);
             Assert.That(actualArgumentToValueMap[argumentName], Is.EqualTo(argumentValue));
@@ -109,7 +117,8 @@ namespace ArgumentParsing.Tests
             const string argumentValue = "c:/temp";
 
             var stringArguments = new[] { $"--{argumentName}", $"{argumentValue}" };
-            var actualArgumentToValueMap = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var result = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var actualArgumentToValueMap = result.ArgumentToValueMap;
 
             Assert.That(actualArgumentToValueMap.ContainsKey(argumentName), Is.True);
             Assert.That(actualArgumentToValueMap[argumentName], Is.EqualTo(argumentValue));
@@ -118,10 +127,22 @@ namespace ArgumentParsing.Tests
         }
 
         [Test]
-        public void GetArgumentToValueMap_Throws_Exception_If_No_Argument_Delimeter_Found_In_String_And_Is_Not_Value()
+        public void GetArgumentToValueMap_Adds_String_To_UnknownArgumentStrings_Collection_If_No_Argument_Delimeter_Found_In_String_And_Is_Not_Value()
         {
             var stringArguments = new[] { "someArgumentName" };
-            Assert.Throws<ArgumentException>(() => _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters));
+            var result = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            
+            Assert.That(result.ArgumentToValueMap, Is.Empty);
+            CollectionAssert.AreEqual(result.UnknownArgumentStrings, stringArguments.ToList());
+
+            stringArguments = new[] { "_someArgumentName", "-validArgument", "--validStringArgument=value" };
+            result = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+
+            Assert.That(result.ArgumentToValueMap["validArgument"], Is.Null);
+            Assert.That(result.ArgumentToValueMap["validStringArgument"], Is.EqualTo("value"));
+            Assert.That(result.ArgumentToValueMap.Count, Is.EqualTo(2));
+            Assert.That(result.UnknownArgumentStrings.Contains("_someArgumentName"), Is.True);
+            Assert.That(result.UnknownArgumentStrings.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -146,7 +167,8 @@ namespace ArgumentParsing.Tests
                 $"/{argumentName3}:{argumentValue3}",
                 $"--{argumentName4}"
             };
-            var actualArgumentToValueMap = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var result = _testObject.GetArgumentToValueMap(stringArguments, _argumentDelimeters, _valueDelimeters);
+            var actualArgumentToValueMap = result.ArgumentToValueMap;
 
             Assert.That(actualArgumentToValueMap.ContainsKey(argumentName1), Is.True);
             Assert.That(actualArgumentToValueMap[argumentName1], Is.EqualTo(argumentValue1));

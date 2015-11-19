@@ -27,6 +27,8 @@ namespace ArgumentParsing.Arguments
         public char ParsedArgumentValue { get; private set; }
         public bool ParsedSuccessfully { get; set; }
 
+        public CharArgument(string possibleArgumentName) : this(new List<string> { possibleArgumentName }) { }
+
         public CharArgument(IList<string> possibleArgumentNames) : this(new Argument(possibleArgumentNames),  new StringParser()) { }
 
         public CharArgument(IArgument argumentWithoutValue, IStringParser stringParser)

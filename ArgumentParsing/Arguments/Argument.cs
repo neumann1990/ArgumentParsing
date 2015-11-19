@@ -23,6 +23,8 @@ namespace ArgumentParsing.Arguments
         public string ParsedArgumentName { get; protected set; }
         public bool ParsedSuccessfully { get; protected set; }
 
+        public Argument(string possibleArgumentName) : this(new List<string> { possibleArgumentName }) { }
+
         public Argument(IList<string> possibleArgumentNames)
         {
             PossibleArgumentNames = possibleArgumentNames;

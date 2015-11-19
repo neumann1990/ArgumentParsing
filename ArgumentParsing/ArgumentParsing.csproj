@@ -47,6 +47,7 @@
     <Compile Include="Arguments\IntArgument.cs" />
     <Compile Include="Arguments\StringArgument.cs" />
     <Compile Include="ArgumentValueMapper.cs" />
+    <Compile Include="ArgumentValueMapperResult.cs" />
     <Compile Include="IArgumentWithValue.cs" />
     <Compile Include="ArgumentParser.cs" />
     <Compile Include="ArgumentParsingResult.cs" />
