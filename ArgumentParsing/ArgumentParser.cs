@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using ArgumentParsing.Arguments;
 
 namespace ArgumentParsing
@@ -10,6 +12,7 @@ namespace ArgumentParsing
         IList<string> ValueDelimeters { get; set; }
         bool FailOnUnknownArgument { get; set; }
         IArgumentParsingResult Parse(string[] rawArgs, IList<IArgument> allowedArguments);
+        string GetUsage(string programDescription, IList<IArgument> allowedArguments);
     }
 
     public class ArgumentParser : IArgumentParser
@@ -66,6 +69,47 @@ namespace ArgumentParsing
             var wasParsingSuccessful = areAllRequiredArgumentsSet && !unknownArgumentFailureOccured;
 
             return new ArgumentParsingResult(wasParsingSuccessful, allowedArguments, unparsableArguments);
+        }
+
+        public string GetUsage(string programDescription, IList<IArgument> allowedArguments)
+        {
+            const string usageNameDelimeter = ", ";
+            var stringBuilder = new StringBuilder();
+
+            if (!string.IsNullOrWhiteSpace(programDescription))
+            {
+                stringBuilder.Append($"\r\nPROGRAM DESCRIPTION\r\n\t{programDescription}");
+            }
+
+            stringBuilder.Append($"\r\nARGUMENTS\r\n");
+
+            foreach (var allowedArgument in allowedArguments)
+            {
+                stringBuilder.Append("\t");
+                foreach (var argumentName in allowedArgument.PossibleArgumentNames)
+                {
+                    stringBuilder.Append($"{ArgumentDelimeters.First()}{argumentName}{usageNameDelimeter}");
+                }
+                
+                //Remove trailing usage delimeters
+                stringBuilder.Replace(usageNameDelimeter, string.Empty, stringBuilder.Length - usageNameDelimeter.Length, usageNameDelimeter.Length);
+
+                //Add whether or not argument is optional
+                var requiredValue = allowedArgument.IsRequired ? string.Empty : "(optional)";
+                stringBuilder.Append($"\t{requiredValue}");
+
+                //Add what type of argument it is
+                if (allowedArgument is IArgumentWithValue)
+                {
+                    var argumentType = allowedArgument.GetType().GetProperty(nameof(IBoolArgument.ParsedArgumentValue)).PropertyType;
+                    stringBuilder.Append($"\t[{argumentType.ToString().Replace("System.", string.Empty)}]");
+                }
+
+                //Add usage description for argument
+                stringBuilder.Append($"\t{allowedArgument.UsageDescription}\r\n");
+            }
+
+            return stringBuilder.ToString();
         }
     }
 }

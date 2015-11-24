@@ -22,6 +22,7 @@ namespace ArgumentParsing.Arguments
         }
 
         public IList<string> PossibleArgumentNames => _argument.PossibleArgumentNames;
+        public string UsageDescription { get; set; } = Argument.DefaultUsageDescription;
         public string ParsedArgumentName => _argument.ParsedArgumentName;
 
         public string ParsedArgumentValue { get; private set; }

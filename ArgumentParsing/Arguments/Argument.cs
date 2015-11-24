@@ -10,14 +10,18 @@ namespace ArgumentParsing.Arguments
         StringComparison ArgumentNameStringComparison { get; set; }
         string ParsedArgumentName { get; }
         IList<string> PossibleArgumentNames { get; }
+        string UsageDescription { get; set; }
         SetArgumentDataResult TrySetArgumentName(string argumentName);
         bool ParsedSuccessfully { get; }
     }
 
     public class Argument : IArgument
     {
+        public const string DefaultUsageDescription = "<No description provided>";
+
         public bool IsRequired { get; set; } = true;
         public IList<string> PossibleArgumentNames { get; }
+        public string UsageDescription { get; set; } = DefaultUsageDescription;
         public StringComparison ArgumentNameStringComparison { get; set; } = StringComparison.CurrentCultureIgnoreCase;
 
         public string ParsedArgumentName { get; protected set; }
