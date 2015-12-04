@@ -78,10 +78,10 @@ namespace ArgumentParsing
 
             if (!string.IsNullOrWhiteSpace(programDescription))
             {
-                stringBuilder.Append($"\r\nPROGRAM DESCRIPTION\r\n\t{programDescription}");
+                stringBuilder.Append($"\r\nPROGRAM DESCRIPTION\r\n\r\n\t{programDescription}\r\n");
             }
 
-            stringBuilder.Append($"\r\nARGUMENTS\r\n");
+            stringBuilder.Append($"\r\nARGUMENTS\r\n\r\n");
 
             foreach (var allowedArgument in allowedArguments)
             {
@@ -106,7 +106,9 @@ namespace ArgumentParsing
                 }
 
                 //Add usage description for argument
-                stringBuilder.Append($"\t{allowedArgument.UsageDescription}\r\n");
+                stringBuilder.Append($"\n\t\t{allowedArgument.UsageDescription}");
+
+                stringBuilder.Append("\r\n");
             }
 
             return stringBuilder.ToString();

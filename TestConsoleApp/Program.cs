@@ -8,6 +8,8 @@ namespace TestConsoleApp
 {
     public class Program
     {
+        private const string ProgramDescription = "This is some program description";
+
         public static void Main(string[] args)
         {
             var helpArgument = new Argument(new List<string> { "help", "h", "?" }) {IsRequired = false};
@@ -37,10 +39,11 @@ namespace TestConsoleApp
 
             Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
 
-            if (!helpArgument.ParsedSuccessfully) return;
-
-            var usage = argumentParser.GetUsage("Test program", allowedArguments);
-            Console.WriteLine(usage);
+            if (helpArgument.ParsedSuccessfully || !result.ParsingSuccessful)
+            {
+                var usage = argumentParser.GetUsage(ProgramDescription, allowedArguments);
+                Console.WriteLine(usage);
+            }
         }
     }
 }

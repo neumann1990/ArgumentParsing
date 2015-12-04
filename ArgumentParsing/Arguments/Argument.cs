@@ -17,7 +17,7 @@ namespace ArgumentParsing.Arguments
 
     public class Argument : IArgument
     {
-        public const string DefaultUsageDescription = "<No description provided>";
+        public const string DefaultUsageDescription = "";
 
         public bool IsRequired { get; set; } = true;
         public IList<string> PossibleArgumentNames { get; }
