@@ -35,11 +35,12 @@ namespace TestConsoleApp
                 allowDuplicateArgument
             };
 
-            var result = argumentParser.Parse(args, allowedArguments);
+            var allArgumentsParsingResult = argumentParser.Parse(args, allowedArguments);
 
-            Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+            //Solely for testing 
+            Console.WriteLine(JsonConvert.SerializeObject(allArgumentsParsingResult, Formatting.Indented));
 
-            if (helpArgument.ParsedSuccessfully || !result.ParsingSuccessful)
+            if (helpArgument.ParsedSuccessfully || !allArgumentsParsingResult.ParsingSuccessful)
             {
                 var usage = argumentParser.GetUsage(ProgramDescription, allowedArguments);
                 Console.WriteLine(usage);
