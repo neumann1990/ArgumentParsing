@@ -11,21 +11,32 @@ Add this ArgumentParsing library to your application.
 1. Instantiate whatever types of arguments your program will accept with the allowable argument name(s):  
 	Ex.  
     ```
-        var helpArgument = new Argument(new List<string> { "help", "h", "?" }) { IsRequired = false }; //The Argument class is for flags (no associated value)  
-		var fileNameArgument = new StringArgument(new List<string> { "fileName", "file" });  
-		var fileTypeArgument = new CharArgument(new List<string> { "fileType", "type" });
-	```
+    var helpArgument = new Argument(new List<string> { "help", "h", "?" }) { IsRequired = false }; //The Argument class is for flags (no associated value)  
+    ```
+    
+    ```	
+    var fileNameArgument = new StringArgument(new List<string> { "fileName", "file" });  
+    ```
+    
+    ```
+    var fileTypeArgument = new CharArgument(new List<string> { "fileType", "type" });
+    ```
 2. Instatiate the ArgumentParser  
 	Ex. 
     ```
     var argumentParser = new ArgumentParser();
     ```
+    
 3. Pass the raw command line arguments, as well as your instantiated arguments, into the Parse method of the ArgumentParser  
 	Ex. 
     ```
-    var allowedArguments = new List<IArgument> { helpArgument, fileNameArgument, fileTypeArgument};`  
-    `var result = argumentParser.Parse(args, allowedArguments);
+    var allowedArguments = new List<IArgument> { helpArgument, fileNameArgument, fileTypeArgument}; 
     ```
+    
+    ```
+    var result = argumentParser.Parse(args, allowedArguments);
+    ```
+    
 4. The ArgumentParser will populate the ParsedSuccessfully, ParsedArgumentName, and, when applicable, the ParsedArgumentValue. You can use these values as you like when parsing has finished.  
 	Ex.  
     ```
